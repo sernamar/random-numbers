@@ -5,6 +5,12 @@
 
 int main (int argc, char *argv[])
 {
+        if (argc != 4) {
+                fprintf(stderr, "%s\n", "Wrong number of arguments.");
+                fprintf(stderr, "%s\n", "Use: ./normal_numbers number_of_elements standard_deviation mean");
+                exit(EXIT_FAILURE);
+        }
+
         int number_of_elements = atoi(argv[1]);
         double standard_deviation = atof(argv[2]);
         double mean = atof(argv[3]);
