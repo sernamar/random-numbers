@@ -25,4 +25,4 @@
   (format t "~a~%" (generate-normal-random-numbers :number-of-elements samples)))
 
 ;;; To create an executable program using SBCL, use:
-;; (sb-ext:save-lisp-and-die "random-numbers" :toplevel #'main :executable t)
+;; (sb-ext:save-lisp-and-die "normal-numbers" :toplevel #'main :executable t)
