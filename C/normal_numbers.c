@@ -21,6 +21,8 @@ int main (int argc, char *argv[])
                 exit(EXIT_FAILURE);
         }
 
+        double *numbers = malloc (number_of_elements * sizeof(double));
+
         double mean = MEAN;
         double standard_deviation = STANDARD_DEVIATION;
         
@@ -41,14 +43,20 @@ int main (int argc, char *argv[])
         r = gsl_rng_alloc (T);
         gsl_rng_set(r, seed);
 
-        // print number_of_elements normal random numbers
+        // generate number_of_elements normal random numbers
         for (int i = 0; i < number_of_elements; i++) {
-                double x = mean + gsl_ran_gaussian (r, standard_deviation);
-                printf (" %f", x);
+                numbers[i] = mean + gsl_ran_gaussian (r, standard_deviation);
         }
-        printf ("\n");
-        
+
+        // print numbers
+        for (int i = 0; i < number_of_elements; i++) {
+                printf (" %f", numbers[i]);
+        }
+        printf("\n");
+
+        // free memory        
         gsl_rng_free (r);
+        free(numbers);
   
         return 0;
 }
