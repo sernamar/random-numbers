@@ -6,20 +6,14 @@ Generate random numbers from the standard normal distribution (mean 0 and standa
 
 For example, to generate 100 random numbers from the standard normal distribution, use:
 
-### C program
+### Sequential programs
 
-```shell
-./normal_numbers 100
-```
+- C: `./normal_numbers 100`
+- Common Lisp: `./normal-numbers 100`
+- Python: `python3 normal_numbers.py 100`
 
-### Common Lisp program
+### Parallel programs
 
-```shell
-./normal-numbers 100
-```
-
-### Python program
-
-```shell
-python3 normal_numbers.py 100
-```
+- C: `./p_normal_numbers 100`
+- Common Lisp: `./p-normal-numbers 100`
+- Python: `python3 p_normal_numbers.py 100`
