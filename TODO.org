@@ -142,6 +142,7 @@
       100.00   30.831366                443676 total
     #+end_src
     It seems that the Python program uses ~pthread~ to run the program in parallel (using every processor), while the C program is a sequential one (just one processor).
+    
     If we use the ~OpenMP~ library to introduce parallelism to the C program, we get:
     #+begin_src sh
       trace -c ./p_normal_numbers 1000000
