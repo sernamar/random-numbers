@@ -3,17 +3,26 @@
 #include <gsl/gsl_rng.h>
 #include <gsl/gsl_randist.h>
 
+#define NUMBER_OF_ELEMENTS 1
+#define MEAN 0
+#define STANDARD_DEVIATION 1
+
 int main (int argc, char *argv[])
 {
-        if (argc != 4) {
+        int number_of_elements;
+        
+        if (argc == 1) {
+                number_of_elements = NUMBER_OF_ELEMENTS;
+        } else if (argc == 2) {
+                number_of_elements = atoi(argv[1]);
+        } else {
                 fprintf(stderr, "%s\n", "Wrong number of arguments.");
-                fprintf(stderr, "%s\n", "Use: ./normal_numbers number_of_elements standard_deviation mean");
+                fprintf(stderr, "%s\n", "Use: ./normal_numbers number_of_elements");
                 exit(EXIT_FAILURE);
         }
 
-        int number_of_elements = atoi(argv[1]);
-        double standard_deviation = atof(argv[2]);
-        double mean = atof(argv[3]);
+        double mean = MEAN;
+        double standard_deviation = STANDARD_DEVIATION;
         
         // declare the necessary random number generator variables
         const gsl_rng_type *T;
