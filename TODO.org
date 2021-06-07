@@ -1,5 +1,5 @@
 * TODO Why is the C program slower than the Python program?
-  - Using ~ltrace~ we get:
+  - Using ~ltrace~, for the C program we get:
     #+begin_src sh
       ltrace -c ./normal_numbers 1000000
 
@@ -18,4 +18,126 @@
         0.00    0.000048          48         1 putchar
       ------ ----------- ----------- --------- --------------------
       100.00   59.860737               2000009 total
+    #+end_src
+    And for the Python program we get:
+    #+begin_src sh
+      ltrace -c python3 normal_numbers.py 1000000
+
+      % time     seconds  usecs/call     calls      function
+      ------ ----------- ----------- --------- --------------------
+       27.46    8.467337          68    124187 memcpy
+       23.00    7.089994          70    100936 memset
+       13.59    4.188887          68     61322 memcmp
+       10.52    3.242366          67     48163 strlen
+        3.69    1.139153          74     15252 strcmp
+        3.38    1.042559          77     13461 strncpy
+        1.88    0.580071          80      7195 __ctype_b_loc
+        1.85    0.569852          74      7666 free
+        1.56    0.481649          64      7513 malloc
+        1.50    0.461926          54      8444 pthread_mutex_unlock
+        1.48    0.455707          53      8444 pthread_mutex_lock
+        1.45    0.447175          75      5950 strchr
+        1.18    0.364545       19186        19 dlopen
+        1.02    0.315757          56      5629 pthread_cond_signal
+        0.94    0.289410          60      4799 __errno_location
+        0.87    0.267835          69      3837 memmove
+        0.83    0.257077          71      3615 pthread_self
+        0.53    0.163869          70      2329 sem_post
+        0.49    0.152593          65      2321 sem_trywait
+        0.42    0.130381          86      1516 memchr
+        0.34    0.103450         344       300 read
+        0.27    0.084292          30      2797 wcstombs
+        0.24    0.073235         100       728 __xstat64
+        0.20    0.062633          65       952 realloc
+        0.18    0.054405          69       779 memrchr
+        0.13    0.040946          37      1093 readdir64
+        0.10    0.030783         205       150 open64
+        0.10    0.029893          68       439 sem_init
+        0.09    0.028366          34       826 mbstowcs
+        0.09    0.026884          62       427 sem_destroy
+        0.07    0.023018          69       329 strcpy
+        0.07    0.022873        7624         3 qsort
+        0.07    0.022578          74       305 __fxstat64
+        0.06    0.017832          50       353 strrchr
+        0.04    0.013218          86       153 lseek64
+        0.04    0.011078          42       258 strncmp
+        0.03    0.010630          69       153 close
+        0.03    0.009666         132        73 strerror
+        0.03    0.008737          58       150 modf
+        0.02    0.005785          29       194 wcslen
+        0.01    0.004178         464         9 setlocale
+        0.01    0.003977          69        57 __vsnprintf_chk
+        0.01    0.003202         139        23 opendir
+        0.01    0.002952          72        41 mmap64
+        0.01    0.002879         125        23 closedir
+        0.01    0.002617         137        19 dlsym
+        0.01    0.002596          38        68 sigaction
+        0.01    0.001916          68        28 __sprintf_chk
+        0.01    0.001831          70        26 ldexp
+        0.01    0.001636          62        26 calloc
+        0.01    0.001566          48        32 getenv
+        0.00    0.001490         745         2 localtime_r
+        0.00    0.001038          69        15 frexp
+        0.00    0.001025          34        30 funlockfile
+        0.00    0.000977          88        11 munmap
+        0.00    0.000824          27        30 flockfile
+        0.00    0.000817          32        25 wcsncpy
+        0.00    0.000619          68         9 round
+        0.00    0.000595          54        11 isatty
+        0.00    0.000469          78         6 getrandom
+        0.00    0.000444          49         9 sem_wait
+        0.00    0.000408         102         4 fopen64
+        0.00    0.000366          33        11 wcschr
+        0.00    0.000325          27        12 fileno
+        0.00    0.000265         132         2 fclose
+        0.00    0.000206          68         3 sigaltstack
+        0.00    0.000189          27         7 wcscat
+        0.00    0.000178          59         3 log
+        0.00    0.000173          34         5 __wcsncpy_chk
+        0.00    0.000166          83         2 write
+        0.00    0.000152          38         4 sigemptyset
+        0.00    0.000149         149         1 fseek
+        0.00    0.000147          73         2 unsetenv
+        0.00    0.000143          71         2 fflush
+        0.00    0.000142          47         3 wcscmp
+        0.00    0.000126          42         3 readlink
+        0.00    0.000126          63         2 fread
+        0.00    0.000119          39         3 fcntl64
+        0.00    0.000117          39         3 dup
+        0.00    0.000109          27         4 nl_langinfo
+        0.00    0.000091          30         3 clock_gettime
+        0.00    0.000090          90         1 uname
+        0.00    0.000080          80         1 exp
+        0.00    0.000079          79         1 rewind
+        0.00    0.000077          77         1 zlibVersion
+        0.00    0.000074          74         1 getc
+        0.00    0.000074          74         1 pow
+        0.00    0.000069          69         1 time
+        0.00    0.000067          67         1 pthread_key_delete
+        0.00    0.000065          32         2 ftell
+        0.00    0.000060          30         2 wcscpy
+        0.00    0.000060          60         1 __realpath_chk
+        0.00    0.000058          29         2 putenv
+        0.00    0.000056          28         2 pthread_mutex_init
+        0.00    0.000055          27         2 pthread_cond_init
+        0.00    0.000045          45         1 __uflow
+        0.00    0.000042          42         1 getpid
+        0.00    0.000041          41         1 geteuid
+        0.00    0.000039          39         1 ioctl
+        0.00    0.000038          38         1 getegid
+        0.00    0.000037          37         1 getuid
+        0.00    0.000037          37         1 getgid
+        0.00    0.000036          36         1 floor
+        0.00    0.000034          34         1 confstr
+        0.00    0.000031          31         1 sysconf
+        0.00    0.000031          31         1 ungetc
+        0.00    0.000031          31         1 __libc_current_sigrtmin
+        0.00    0.000029          29         1 __libc_current_sigrtmax
+        0.00    0.000029          29         1 wcsrchr
+        0.00    0.000029          29         1 __wcscpy_chk
+        0.00    0.000028          28         1 pthread_setspecific
+        0.00    0.000028          28         1 pthread_key_create
+        0.00    0.000027          27         1 pthread_getspecific
+      ------ ----------- ----------- --------- --------------------
+      100.00   30.831366                443676 total
     #+end_src
