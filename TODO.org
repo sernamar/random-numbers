@@ -142,3 +142,27 @@
       100.00   30.831366                443676 total
     #+end_src
     It seems that the Python program uses ~pthread~ to run the program in parallel (using every processor), while the C program is a sequential one (just one processor).
+    If we use the ~OpenMP~ library to introduce parallelism to the C program, we get:
+    #+begin_src sh
+      trace -c ./p_normal_numbers 1000000
+
+      % time     seconds  usecs/call     calls      function
+      ------ ----------- ----------- --------- --------------------
+       58.85  157.056882    78528441         2 GOMP_parallel
+       20.96   55.951694         223    250000 gsl_ran_gaussian
+       20.19   53.878232         215    250000 printf
+        0.00    0.004754        4754         1 putchar
+        0.00    0.000626         313         2 omp_get_thread_num
+        0.00    0.000561         280         2 omp_get_num_threads
+        0.00    0.000139         139         1 free
+        0.00    0.000131         131         1 atoi
+        0.00    0.000106         106         1 gsl_rng_free
+        0.00    0.000103         103         1 malloc
+        0.00    0.000058          58         1 gsl_rng_env_setup
+        0.00    0.000055          55         1 gsl_rng_alloc
+        0.00    0.000052          52         1 gettimeofday
+        0.00    0.000046          46         1 gsl_rng_set
+      ------ ----------- ----------- --------- --------------------
+      100.00  266.893439                500015 total
+    #+end_src
+    As we can see, it doesn't help at all, eveb making the program slower. I should try using the ~pthread~ library instead...
