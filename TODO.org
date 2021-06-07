@@ -141,3 +141,4 @@
       ------ ----------- ----------- --------- --------------------
       100.00   30.831366                443676 total
     #+end_src
+    It seems that the Python program uses ~pthread~ to run the program in parallel (using every processor), while the C program is a sequential one (just one processor).
