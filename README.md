@@ -17,7 +17,7 @@ Python version: 3.7.3
 
 ### Simulations
 
-#### 1 billion samples in parallel
+#### 1 billion samples, sequentially
 
 ##### C (gcc, default optimization level)
 
@@ -85,7 +85,7 @@ For example, to generate 100 random numbers from the standard normal distributio
 - Common Lisp: `./normal-numbers 100`
 - Python: `python3 normal_numbers.py 100`
 
-### Parallel programs
+### Parallel programs (not implemented yet)
 
 - C: `./p_normal_numbers 100`
 - Common Lisp: `./p-normal-numbers 100`
