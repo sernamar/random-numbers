@@ -1,0 +1,21 @@
+* TODO Why is the C program slower than the Python program?
+  - Using ~ltrace~ we get:
+    #+begin_src sh
+      ltrace -c ./normal_numbers 1000000
+
+      % time     seconds  usecs/call     calls      function
+      ------ ----------- ----------- --------- --------------------
+       50.62   30.302716          30   1000000 printf
+       49.37   29.554536          29   1000000 gsl_ran_gaussian
+        0.00    0.001904        1904         1 gsl_rng_env_setup
+        0.00    0.000475         475         1 malloc
+        0.00    0.000258         258         1 gettimeofday
+        0.00    0.000249         249         1 atoi
+        0.00    0.000232         232         1 gsl_rng_alloc
+        0.00    0.000137         137         1 gsl_rng_set
+        0.00    0.000128         128         1 free
+        0.00    0.000054          54         1 gsl_rng_free
+        0.00    0.000048          48         1 putchar
+      ------ ----------- ----------- --------- --------------------
+      100.00   59.860737               2000009 total
+    #+end_src
