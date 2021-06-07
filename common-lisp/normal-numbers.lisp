@@ -11,6 +11,7 @@
 
 (defun generate-normal-random-numbers (&key (number-of-elements 1) (mean 0) (standard-deviation 1d0))
   (declare (type double-float standard-deviation))
+  (setf *random-state* (make-random-state t)) ; necessary to get a new seed each time we run the standalone executable created using SBCL
   (let* ((seed (random (expt 2 32)))
          (rng (make-random-number-generator +mt19937+ seed)))
     (loop :repeat number-of-elements
