@@ -9,9 +9,20 @@
 
 (in-package #:random-numbers)
 
-(defun generate-random-gaussian-samples (number-of-samples &key (mean 0) (standard-deviation 1d0))
+(defun generate-normal-random-numbers (&key (number-of-elements 1) (mean 0) (standard-deviation 1d0))
   (declare (type double-float standard-deviation))
   (let* ((seed (random (expt 2 32)))
          (rng (make-random-number-generator +mt19937+ seed)))
-    (loop :repeat number-of-samples
+    (loop :repeat number-of-elements
           :collect (+ mean (sample rng :gaussian :sigma standard-deviation)))))
+
+(defun main (&optional (samples 1))
+  ;; parse arguments
+  (let ((args (uiop:command-line-arguments)))
+    (when args
+      (setf samples (parse-integer (first args)))))  
+  ;; generate random numbers
+  (format t "~a~%" (generate-normal-random-numbers :number-of-elements samples)))
+
+;;; To create an executable program using SBCL, use:
+;; (sb-ext:save-lisp-and-die "random-numbers" :toplevel #'main :executable t)
