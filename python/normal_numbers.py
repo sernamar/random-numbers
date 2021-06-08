@@ -26,4 +26,7 @@ if __name__ == '__main__':
 
     # generate random numbers
     numbers = generate_normal_random_numbers(samples)
-    print(numbers)
+    if (len(numbers) < 10):
+        print(numbers)
+    else:
+        print("Done.")

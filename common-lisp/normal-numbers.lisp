@@ -23,7 +23,10 @@
     (when args
       (setf samples (parse-integer (first args)))))  
   ;; generate random numbers
-  (format t "~a~%" (generate-normal-random-numbers :number-of-elements samples)))
+  (let ((numbers (generate-normal-random-numbers :number-of-elements samples)))
+    (if (< (length numbers) 10)
+        (format t "~a~%" numbers)
+        (format t "Done."))))
 
 ;;; To create an executable program using SBCL, use:
 ;; (sb-ext:save-lisp-and-die "normal-numbers" :toplevel #'main :executable t)

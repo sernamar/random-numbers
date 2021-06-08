@@ -49,10 +49,14 @@ int main (int argc, char *argv[])
         }
 
         // print numbers
-        for (int i = 0; i < number_of_elements; i++) {
-                printf (" %f", numbers[i]);
+        if(number_of_elements < 10) {
+                for (int i = 0; i < number_of_elements; i++) {
+                        printf (" %f", numbers[i]);
+                }
+                printf("\n");
+        } else {
+                printf("Done.\n");
         }
-        printf("\n");
 
         // free memory        
         gsl_rng_free (r);
