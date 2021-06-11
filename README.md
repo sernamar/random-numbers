@@ -63,8 +63,9 @@ Heap exhausted, game over.
 Welcome to LDB, a low-level debugger for the Lisp runtime environment.
 ldb> 
 ```
+#### 1 billion samples, in parallel
 
-##### Python
+##### Python (numpy runs the `standard_normal` function in parallel)
 
 ```shell
 time python3 normal_numbers.py 1000000000
@@ -83,11 +84,10 @@ For example, to generate 100 random numbers from the standard normal distributio
 
 - C: `./normal_numbers 100`
 - Common Lisp: `./normal-numbers 100`
-- Python: `python3 normal_numbers.py 100`
 
 ### Parallel programs (not implemented yet)
 
 - C: `./p_normal_numbers 100`
 - Common Lisp: `./p-normal-numbers 100`
-- Python: `python3 p_normal_numbers.py 100`
+- Python: `python3 normal_numbers.py 100`
 
