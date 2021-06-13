@@ -6,7 +6,7 @@
 #include <sys/sysinfo.h>
 #include <sys/time.h>
 
-#define NUMBER_OF_ELEMENTS 1000000000
+#define NUMBER_OF_ELEMENTS 98
 #define NUMBER_OF_THREADS 4
 
 #define MEAN 0
@@ -21,6 +21,7 @@ void * initialize_array (void *thread_number) {
         int elements_per_thread = NUMBER_OF_ELEMENTS / NUMBER_OF_THREADS;
 	int start = *thread_id * elements_per_thread;
         int end = start + elements_per_thread;
+        printf("[Thread %d] Initializing elements from %d to %d\n", *thread_id, start, end-1);
 
         // declare the necessary random number generator variables
         const gsl_rng_type *T;
@@ -44,11 +45,11 @@ void * initialize_array (void *thread_number) {
         }
 
         // Initialize remaining elements if NUMBER_OF_ELEMENTS is not divisible by NUMBER_OF_THREADS
-        if (end < NUMBER_OF_ELEMENTS) {
+        if ((*thread_id == NUMBER_OF_THREADS - 1) && (end < NUMBER_OF_ELEMENTS)) {
                 start = end;
                 end = NUMBER_OF_ELEMENTS;
                 for (i = start;  i < end; i++) {
-                        array[i] = (double) i;
+                        array[i] = MEAN + gsl_ran_gaussian (r, STANDARD_DEVIATION);
                 }
         }
 
