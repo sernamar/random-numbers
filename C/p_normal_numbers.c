@@ -36,9 +36,8 @@ int main (int argc, char *argv[])
 	}
 
 	// wait until every thread ends
-	void *result;
         for (i = 0; i < NUMBER_OF_THREADS; i++) {
-		if (pthread_join(threads[i], &result) == -1) {
+		if (pthread_join(threads[i], NULL) == -1) {
 			fprintf(stderr, "%s %d\n", "Can't join thread number", i);
 		}
 	}
