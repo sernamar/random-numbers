@@ -5,25 +5,36 @@
 
 #define NUMBER_OF_ELEMENTS 98
 #define NUMBER_OF_THREADS 4
-#define ELEMENTS_PER_THREAD NUMBER_OF_ELEMENTS / NUMBER_OF_THREADS
 
 double array[NUMBER_OF_ELEMENTS];
 
 void * initialize_array (void *thread_number) {
         int *thread_id = (int *) thread_number;
-	int start = *thread_id * ELEMENTS_PER_THREAD;
-        int end = start + ELEMENTS_PER_THREAD;
-        printf("[Thread %d] Initializing elements from %d to %d\n", *thread_id, start, end-1);
-        for (int i = start; i < end; i++) {
+
+        int i;
+        int elements_per_thread = NUMBER_OF_ELEMENTS / NUMBER_OF_THREADS;
+	int start = *thread_id * elements_per_thread;
+        int end = start + elements_per_thread;
+        
+        for (i = start; i < end; i++) {
                 array[i] = (double) i;
         }
-        
+
+        // Initialize remaining elements if NUMBER_OF_ELEMENTS is not divisible by NUMBER_OF_THREADS
+        if (end < NUMBER_OF_ELEMENTS) {
+                start = end;
+                end = NUMBER_OF_ELEMENTS;
+                for (i = start;  i < end; i++) {
+                        array[i] = (double) i;
+                }
+        }
+
         pthread_exit(NULL);
 }
 
 int main (int argc, char *argv[])
 {
-	pthread_t threads[NUMBER_OF_THREADS];
+        pthread_t threads[NUMBER_OF_THREADS];
 	int thread_id[NUMBER_OF_THREADS];
 	int i;
 
@@ -43,21 +54,14 @@ int main (int argc, char *argv[])
 	}
 
         // print numbers
-        /* if(NUMBER_OF_ELEMENTS <= 100) { */
-        /*         for (i = 0; i < NUMBER_OF_ELEMENTS; i++) { */
-        /*                 printf (" %f", array[i]); */
-        /*         } */
-        /*         printf("\n"); */
-        /* } else { */
-        /*         printf("Done.\n"); */
-        /* } */
-
-        // print uninitialized elements
-        for (i = 1; i < NUMBER_OF_ELEMENTS; i++) {
-                if (array[i] < 1) {
-                        printf("Element %d uninitialized.\n", i);
+        if(NUMBER_OF_ELEMENTS <= 100) {
+                for (i = 0; i < NUMBER_OF_ELEMENTS; i++) {
+                        printf (" %f", array[i]);
                 }
+                printf("\n");
+        } else {
+                printf("Done.\n");
         }
-  
+
         return 0;
 }
