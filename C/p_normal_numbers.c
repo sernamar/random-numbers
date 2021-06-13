@@ -20,7 +20,7 @@ struct arguments {
 
 void * initialize_array (void *arguments) {
 
-        /* Get arguments */
+        /** Get arguments **/
         
         struct arguments *args = (struct arguments *) arguments;
         double *array = args->array;
@@ -30,7 +30,7 @@ void * initialize_array (void *arguments) {
         int thread_id = args->thread_id;
         unsigned long seed = args->seed;
 
-        /* Create a new random number generator */
+        /** Create a new random number generator **/
         
         // declare the necessary random number generator variables
         const gsl_rng_type *T;
@@ -44,7 +44,7 @@ void * initialize_array (void *arguments) {
         r = gsl_rng_alloc (T);
         gsl_rng_set(r, seed);
 
-        /* Using the GSL library, initialize the array with normal random values*/
+        /** Using the GSL library, initialize the array with normal random values **/
 
 	int start = thread_id * elements_per_thread;
         int end = start + elements_per_thread;
@@ -62,10 +62,10 @@ void * initialize_array (void *arguments) {
                 }
         }
 
-        /* Free memory */
+        /** Free memory **/
         gsl_rng_free (r);
 
-        /* Exit thread when finished */
+        /** Exit thread when finished **/
         pthread_exit(NULL);
 }
 
