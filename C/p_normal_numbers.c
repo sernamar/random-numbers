@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <sys/sysinfo.h>
 
-#define NUMBER_OF_ELEMENTS 100
+#define NUMBER_OF_ELEMENTS 98
 #define NUMBER_OF_THREADS 4
 #define ELEMENTS_PER_THREAD NUMBER_OF_ELEMENTS / NUMBER_OF_THREADS
 
@@ -43,13 +43,20 @@ int main (int argc, char *argv[])
 	}
 
         // print numbers
-        if(NUMBER_OF_ELEMENTS <= 100) {
-                for (int i = 0; i < NUMBER_OF_ELEMENTS; i++) {
-                        printf (" %f", array[i]);
+        /* if(NUMBER_OF_ELEMENTS <= 100) { */
+        /*         for (i = 0; i < NUMBER_OF_ELEMENTS; i++) { */
+        /*                 printf (" %f", array[i]); */
+        /*         } */
+        /*         printf("\n"); */
+        /* } else { */
+        /*         printf("Done.\n"); */
+        /* } */
+
+        // print uninitialized elements
+        for (i = 1; i < NUMBER_OF_ELEMENTS; i++) {
+                if (array[i] < 1) {
+                        printf("Element %d uninitialized.\n", i);
                 }
-                printf("\n");
-        } else {
-                printf("Done.\n");
         }
   
         return 0;
