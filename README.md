@@ -65,6 +65,26 @@ ldb>
 ```
 #### 1 billion samples, in parallel
 
+##### C (gcc, default optimization level)
+
+```shell
+time ./p_normal_numbers 
+
+real	0m43,805s
+user	1m49,314s
+sys	    0m6,750s
+```
+
+##### C (gcc, O3 optimization level)
+
+```shell
+time ./p_normal_numbers_O3
+
+real    0m41,619s
+user    1m49,396s
+sys     0m6,413s
+```
+
 ##### Python (numpy runs the `standard_normal` function in parallel)
 
 ```shell

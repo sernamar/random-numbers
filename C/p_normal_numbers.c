@@ -1,10 +1,16 @@
+#include <gsl/gsl_rng.h>
+#include <gsl/gsl_randist.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/sysinfo.h>
+#include <sys/time.h>
 
-#define NUMBER_OF_ELEMENTS 98
+#define NUMBER_OF_ELEMENTS 1000000000
 #define NUMBER_OF_THREADS 4
+
+#define MEAN 0
+#define STANDARD_DEVIATION 1
 
 double array[NUMBER_OF_ELEMENTS];
 
@@ -15,9 +21,26 @@ void * initialize_array (void *thread_number) {
         int elements_per_thread = NUMBER_OF_ELEMENTS / NUMBER_OF_THREADS;
 	int start = *thread_id * elements_per_thread;
         int end = start + elements_per_thread;
+
+        // declare the necessary random number generator variables
+        const gsl_rng_type *T;
+        gsl_rng *r;
+
+        // set the default values for the random number generator variables
+        gsl_rng_env_setup();
+
+        // create a seed based on time
+        struct timeval tv;
+        gettimeofday(&tv,0);
+        unsigned long seed = tv.tv_sec + tv.tv_usec;
+
+        // setup the generator using the seed just created
+        T = gsl_rng_default;
+        r = gsl_rng_alloc (T);
+        gsl_rng_set(r, seed);
         
         for (i = start; i < end; i++) {
-                array[i] = (double) i;
+                array[i] = MEAN + gsl_ran_gaussian (r, STANDARD_DEVIATION);
         }
 
         // Initialize remaining elements if NUMBER_OF_ELEMENTS is not divisible by NUMBER_OF_THREADS
@@ -32,7 +55,7 @@ void * initialize_array (void *thread_number) {
         pthread_exit(NULL);
 }
 
-int main (int argc, char *argv[])
+int main (void)
 {
         pthread_t threads[NUMBER_OF_THREADS];
 	int thread_id[NUMBER_OF_THREADS];
@@ -61,13 +84,6 @@ int main (int argc, char *argv[])
                 printf("\n");
         } else {
                 printf("Done.\n");
-        }
-
-        // print uninitialized elements
-        for (i = 1; i < NUMBER_OF_ELEMENTS; i++) {
-                if (array[i] < 1) {
-                        printf("Element %d uninitialized.\n", i);
-                }
         }
 
         return 0;
