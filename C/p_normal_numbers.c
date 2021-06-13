@@ -39,7 +39,7 @@ int main (int argc, char *argv[])
 	void *result;
         for (i = 0; i < NUMBER_OF_THREADS; i++) {
 		if (pthread_join(threads[i], &result) == -1) {
-			printf("Can't join thread number %d\n", i);
+			fprintf(stderr, "%s %d\n", "Can't join thread number", i);
 		}
 	}
 
