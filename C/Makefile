@@ -9,6 +9,9 @@ normal_numbers: normal_numbers.c
 normal_numbers_O3: normal_numbers.c
 	gcc -O3 $^ -o $@ -lgsl -lgslcblas
 
+p_normal_numbers_dev: p_normal_numbers.c
+	gcc $(CFLAGS) -lpthread $^ -o $@ -lgsl -lgslcblas
+
 p_normal_numbers: p_normal_numbers.c
 	gcc -lpthread $^ -o $@ -lgsl -lgslcblas
 
