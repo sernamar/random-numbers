@@ -65,8 +65,10 @@ void * initialize_array (void *arguments) {
                 }
         }
 
-        /* Exit thread when finished */
+        /* Free memory */
+        gsl_rng_free (r);
 
+        /* Exit thread when finished */
         pthread_exit(NULL);
 }
 
@@ -123,5 +125,9 @@ int main (int argc, char* argv[])
                 printf("%f %f ... %f %f\n", array[0], array[1], array[number_of_elements -2], array[number_of_elements -1]);
         }
 
+        // free memory
+        free(array);
+        free(threads);
+        
         return 0;
 }
