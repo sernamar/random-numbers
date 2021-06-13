@@ -6,7 +6,7 @@
 #include <sys/sysinfo.h>
 #include <sys/time.h>
 
-#define NUMBER_OF_ELEMENTS 98
+#define NUMBER_OF_ELEMENTS 1000000
 #define NUMBER_OF_THREADS 4
 
 #define MEAN 0
