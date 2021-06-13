@@ -63,5 +63,12 @@ int main (int argc, char *argv[])
                 printf("Done.\n");
         }
 
+        // print uninitialized elements
+        for (i = 1; i < NUMBER_OF_ELEMENTS; i++) {
+                if (array[i] < 1) {
+                        printf("Element %d uninitialized.\n", i);
+                }
+        }
+
         return 0;
 }
