@@ -15,6 +15,7 @@ struct arguments {
         int number_of_elements;
         int number_of_threads;
         int thread_id;
+        unsigned long seed;
 };
 
 void * initialize_array (void *arguments) {
@@ -27,8 +28,9 @@ void * initialize_array (void *arguments) {
         int number_of_threads = args->number_of_threads;
         int elements_per_thread = number_of_elements / number_of_threads;
         int thread_id = args->thread_id;
+        unsigned long seed = args->seed;
 
-        /* Create a new random number generator using a new seed*/
+        /* Create a new random number generator */
         
         // declare the necessary random number generator variables
         const gsl_rng_type *T;
@@ -37,12 +39,7 @@ void * initialize_array (void *arguments) {
         // set the default values for the random number generator variables
         gsl_rng_env_setup();
 
-        // create a seed based on time
-        struct timeval tv;
-        gettimeofday(&tv,0);
-        unsigned long seed = tv.tv_sec + tv.tv_usec;
-
-        // setup the generator using the seed just created
+        // setup the generator using the seed we got from the main function
         T = gsl_rng_default;
         r = gsl_rng_alloc (T);
         gsl_rng_set(r, seed);
@@ -89,6 +86,8 @@ int main (int argc, char* argv[])
         double *array = (double *) malloc(number_of_elements * sizeof(double));
         pthread_t *threads = (pthread_t *) malloc(number_of_elements * sizeof(pthread_t));
         struct arguments *args;
+
+        srand(time(NULL)); // need to to use a new seed each time we run the program
         
         // create threads
 	for (i = 0; i < number_of_threads; i++) {
@@ -100,6 +99,7 @@ int main (int argc, char* argv[])
                 args->number_of_elements = number_of_elements;
                 args->number_of_threads = number_of_threads;
                 args->thread_id = i;
+                args->seed = random();
 
                 // create the threads
                 if(pthread_create(&threads[i], NULL, initialize_array, (void *) args) == -1) {
