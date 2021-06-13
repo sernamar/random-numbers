@@ -102,7 +102,8 @@ For example, to generate 100 random numbers from the standard normal distributio
 
 ### Sequential programs
 
-- C: `./normal_numbers 100`
+- C (not optimized): `./normal_numbers 100`
+- C (optimized): `./normal_numbers_O3 100`
 - Common Lisp: `./normal-numbers 100`
 
 ### Parallel programs
