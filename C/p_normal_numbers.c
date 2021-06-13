@@ -1,85 +1,91 @@
-#include <gsl/gsl_rng.h>
-#include <gsl/gsl_randist.h>
 #include <pthread.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <sys/sysinfo.h>
 #include <sys/time.h>
+#include <unistd.h>
 
-#define NUMBER_OF_ELEMENTS 1000000
-#define NUMBER_OF_THREADS 4
+#define PRINT_MAX 100 // don't print more than 100 elements
 
-#define MEAN 0
-#define STANDARD_DEVIATION 1
+struct arguments {
+        double *array;
+        int number_of_elements;
+        int number_of_threads;
+        int thread_id;
+};
 
-double array[NUMBER_OF_ELEMENTS];
+void * initialize_array (void *arguments) {
+        struct arguments *args = (struct arguments *) arguments;
+        double *array = args->array;
+        int number_of_elements = args->number_of_elements;
+        int number_of_threads = args->number_of_threads;
+        int elements_per_thread = number_of_elements / number_of_threads;
+        int thread_id = args->thread_id;
 
-void * initialize_array (void *thread_number) {
-        int *thread_id = (int *) thread_number;
-
-        int i;
-        int elements_per_thread = NUMBER_OF_ELEMENTS / NUMBER_OF_THREADS;
-	int start = *thread_id * elements_per_thread;
+	int start = thread_id * elements_per_thread;
         int end = start + elements_per_thread;
-        printf("[Thread %d] Initializing elements from %d to %d\n", *thread_id, start, end-1);
 
-        // declare the necessary random number generator variables
-        const gsl_rng_type *T;
-        gsl_rng *r;
-
-        // set the default values for the random number generator variables
-        gsl_rng_env_setup();
-
-        // create a seed based on time
-        struct timeval tv;
-        gettimeofday(&tv,0);
-        unsigned long seed = tv.tv_sec + tv.tv_usec;
-
-        // setup the generator using the seed just created
-        T = gsl_rng_default;
-        r = gsl_rng_alloc (T);
-        gsl_rng_set(r, seed);
-        
-        for (i = start; i < end; i++) {
-                array[i] = MEAN + gsl_ran_gaussian (r, STANDARD_DEVIATION);
+        for (int i = start; i < end; i++) {
+                array[i] = i;
         }
 
-        // Initialize remaining elements if NUMBER_OF_ELEMENTS is not divisible by NUMBER_OF_THREADS
-        if ((*thread_id == NUMBER_OF_THREADS - 1) && (end < NUMBER_OF_ELEMENTS)) {
+        // initialize remaining elements if number_of_elements is not divisible by number_of_threads
+        if ((thread_id == number_of_threads - 1) && (end < number_of_elements)) {
                 start = end;
-                end = NUMBER_OF_ELEMENTS;
-                for (i = start;  i < end; i++) {
-                        array[i] = MEAN + gsl_ran_gaussian (r, STANDARD_DEVIATION);
+                end = number_of_elements;
+                for (int i = start;  i < end; i++) {
+                        array[i] = i;
                 }
         }
 
         pthread_exit(NULL);
 }
 
-int main (void)
+int main (int argc, char* argv[])
 {
-        pthread_t threads[NUMBER_OF_THREADS];
-	int thread_id[NUMBER_OF_THREADS];
-	int i;
-
+        int i;
+        int number_of_elements;
+        int number_of_threads;
+        if (argc == 3) {
+                number_of_elements = atoi(argv[1]);
+                number_of_threads = atoi(argv[2]);
+        } else {
+                fprintf(stderr, "%s:\n", "Wrong number of arguments.");
+                fprintf(stderr, "%s:\n", "Use: ./avoid_race_condition number_of_elements number_of_threads");
+                exit(EXIT_FAILURE);
+        }
+        
+        double *array = (double *) malloc(number_of_elements * sizeof(double));
+        pthread_t *threads = (pthread_t *) malloc(number_of_elements * sizeof(pthread_t));
+        struct arguments *args;
+        
         // create threads
-	for (i = 0; i < NUMBER_OF_THREADS; i++) {
-		thread_id[i] = i;
-                if(pthread_create(&threads[i], NULL, initialize_array, (void *) &thread_id[i]) == -1) {
+	for (i = 0; i < number_of_threads; i++) {
+                // the calling thread uses a new data structure for each thread,
+                // so we can be sure that the args variable cannot be changed by other threads,
+                // avoiding race conditions
+                args = (struct arguments *) malloc(sizeof(struct arguments));
+                args->array = array;
+                args->number_of_elements = number_of_elements;
+                args->number_of_threads = number_of_threads;
+                args->thread_id = i;
+
+                // create the threads
+                if(pthread_create(&threads[i], NULL, initialize_array, (void *) args) == -1) {
                         fprintf(stderr, "%s %d\n", "Can't create thread number", i);
                 }
 	}
 
 	// wait until every thread ends
-        for (i = 0; i < NUMBER_OF_THREADS; i++) {
+        for (i = 0; i < number_of_threads; i++) {
 		if (pthread_join(threads[i], NULL) == -1) {
 			fprintf(stderr, "%s %d\n", "Can't join thread number", i);
 		}
 	}
 
         // print numbers
-        if(NUMBER_OF_ELEMENTS <= 100) {
-                for (i = 0; i < NUMBER_OF_ELEMENTS; i++) {
+        if(number_of_elements <= PRINT_MAX) {
+                for (i = 0; i < number_of_elements; i++) {
                         printf (" %f", array[i]);
                 }
                 printf("\n");
