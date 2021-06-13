@@ -105,9 +105,9 @@ For example, to generate 100 random numbers from the standard normal distributio
 - C: `./normal_numbers 100`
 - Common Lisp: `./normal-numbers 100`
 
-### Parallel programs (not implemented yet)
+### Parallel programs
 
-- C: `./p_normal_numbers 100`
-- Common Lisp: `./p-normal-numbers 100`
+- C (not optimized): `./p_normal_numbers` (no command line support; it just generates 1 billion numbers)
+- C (optimized): `./p_normal_numbers_O3`  (no command line support; it just generates 1 billion numbers)
 - Python: `python3 normal_numbers.py 100`
 
