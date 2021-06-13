@@ -68,21 +68,21 @@ ldb>
 ##### C (gcc, default optimization level)
 
 ```shell
-time ./p_normal_numbers 
+time ./p_normal_numbers 1000000000 4
 
-real	0m43,805s
-user	1m49,314s
-sys	    0m6,750s
+real    0m29,527s
+user    1m48,240s
+sys     0m3,309s
 ```
 
 ##### C (gcc, O3 optimization level)
 
 ```shell
-time ./p_normal_numbers_O3
+time ./p_normal_numbers_O3 1000000000 4
 
-real    0m41,619s
-user    1m49,396s
-sys     0m6,413s
+real    0m28,776s
+user    1m43,710s
+sys     0m3,392s
 ```
 
 ##### Python (numpy runs the `standard_normal` function in parallel)
@@ -107,7 +107,7 @@ For example, to generate 100 random numbers from the standard normal distributio
 
 ### Parallel programs
 
-- C (not optimized): `./p_normal_numbers` (no command line support; it just generates 1 billion numbers)
-- C (optimized): `./p_normal_numbers_O3`  (no command line support; it just generates 1 billion numbers)
+- C (not optimized): `./p_normal_numbers 100 4`
+- C (optimized): `./p_normal_numbers_O3 100 4`
 - Python: `python3 normal_numbers.py 100`
 
