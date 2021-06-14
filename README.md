@@ -132,7 +132,7 @@ restarts (invokable by number or by possibly-abbreviated name):
 0]
 ```
 
-Unfortunatelly, it seems that my Common Lisp program can not deal with 1 billion numbers... Just as reference, it works fine for 10 million numbers (note that they are not randomly generated, but just initialized using the index of their elements):
+Unfortunatelly, it seems that my Common Lisp program can not deal with 1 billion numbers... Just as reference, it works fine for 10 million numbers (note that they are not randomly generated, but just initialized using the index of the array's elements):
 
 ```shell
 time ./p-index-numbers 100000000 4
