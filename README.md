@@ -63,6 +63,8 @@ Heap exhausted, game over.
 Welcome to LDB, a low-level debugger for the Lisp runtime environment.
 ldb> 
 ```
+Unfortunatelly, it seems that the Common Lisp program cannot deal with 1 billion numbers... Apparently, the problem is that we cannot make an array with so many elements. (See the "1 billion numbers, in parallel" section, "Common Lisp" subsection, for more details about this issue).
+
 #### 1 billion numbers, in parallel
 
 ##### C (gcc, default optimization level)
@@ -132,7 +134,50 @@ restarts (invokable by number or by possibly-abbreviated name):
 0]
 ```
 
-Unfortunatelly, it seems that my Common Lisp program can not deal with 1 billion numbers... Just as reference, it works fine for 10 million numbers (note that they are not randomly generated, but just initialized using the index of the array's elements):
+Unfortunatelly, it seems that the Common Lisp program cannot deal with 1 billion numbers... Apparently, the problem is that we cannot make an array with so many elements. Just playing a bit, it seems that in my system, the limit is 100 millions. With 100 millions, it works:
+
+```shell
+(defparameter *a* (make-array 100000000))
+*A
+```
+
+But with 100 millions + 1 element, it doesn't:
+
+```shell
+(defparameter *a* (make-array 100000001))       
+Heap exhausted during allocation: 112525312 bytes available, 800000032 requested.
+Gen  Boxed   Code    Raw  LgBox LgCode  LgRaw  Pin       Alloc     Waste        Trig      WP GCs Mem-age
+ 0       3      0      0   2442      0      0 2443    80002240    115520    90739658    2445   1  0.0000
+ 1     120      1     37  24415      0      0 24424   805111216     96848   815848634   24573   1  0.0000
+ 2       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 3       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 4       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 5       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 6     430      2    182     55      0     10    0    21573072    676400     2000000     679   0  0.0000
+           Total bytes allocated    =     906686528
+           Dynamic-space-size bytes =    1073741824
+GC control variables:
+   *GC-INHIBIT* = false
+   *GC-PENDING* = true
+   *STOP-FOR-GC-PENDING* = false
+
+debugger invoked on a SB-KERNEL::HEAP-EXHAUSTED-ERROR in thread
+#<THREAD "main thread" RUNNING {1001A08173}>:
+  Heap exhausted (no more space for allocation).
+112525312 bytes available, 800000032 requested.
+
+PROCEED WITH CAUTION.
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [ABORT] Exit debugger, returning to top level.
+
+(SB-KERNEL::HEAP-EXHAUSTED-ERROR 56262656 400000016)
+0] 
+```
+
+Just as reference, these are the time benchmarks we get with 100 million numbers (also note that these are not randomly generated, but just initialized using the index of the array's elements):
 
 ```shell
 time ./p-index-numbers 100000000 4
