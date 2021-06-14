@@ -99,7 +99,7 @@ sys     0m5,896s
 ##### Common Lisp (1 billion numbers, not randomly generated)
 
 ```shell
-time ./p-normal-numbers 1000000000 4
+time ./p-index-numbers 1000000000 4
 Heap exhausted during allocation: 1046183936 bytes available, 8000000016 requested.
 Gen  Boxed   Code    Raw  LgBox LgCode  LgRaw  Pin       Alloc     Waste        Trig      WP GCs Mem-age
  0       2      0      1      0      0      0    0       24128     74176    10761546       3   1  0.0000
@@ -135,7 +135,7 @@ restarts (invokable by number or by possibly-abbreviated name):
 Unfortunatelly, it seems that my Common Lisp program can not deal with 1 billion numbers... Just as reference, it works fine for 10 million numbers (note that they are not randomly generated, but just initialized using the index of their elements):
 
 ```shell
-time ./p-normal-numbers 100000000 4
+time ./p-index-numbers 100000000 4
 
 real    0m1,034s
 user    0m0,932s
@@ -156,6 +156,6 @@ For example, to generate 100 random numbers from the standard normal distributio
 
 - C (not optimized): `./p_normal_numbers 100 4`
 - C (optimized): `./p_normal_numbers_O3 100 4`
-- Common Lisp: `./p-normal-numbers 100 4`
+- Common Lisp: `./p-index-numbers 100 4`
 - Python: `python3 normal_numbers.py 100`
 

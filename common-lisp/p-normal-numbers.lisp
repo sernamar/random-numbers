@@ -38,4 +38,4 @@
     array))
 
 ;;; To create an executable program using SBCL, use:
-;; (sb-ext:save-lisp-and-die "p-normal-numbers" :toplevel #'main :executable t)
+;; (sb-ext:save-lisp-and-die "p-index-numbers" :toplevel #'main :executable t)
