@@ -85,24 +85,20 @@ int main (int argc, char* argv[])
         
         double *array = (double *) malloc(number_of_elements * sizeof(double));
         pthread_t *threads = (pthread_t *) malloc(number_of_threads * sizeof(pthread_t));
-        struct arguments *args;
+        struct arguments *args = (struct arguments *) malloc(number_of_threads * sizeof(struct arguments));;
 
         srand(time(NULL)); // need to to use a new seed each time we run the program
         
         // create threads
 	for (i = 0; i < number_of_threads; i++) {
-                // the calling thread uses a new data structure for each thread,
-                // so we can be sure that the args variable cannot be changed by other threads,
-                // avoiding race conditions
-                args = (struct arguments *) malloc(sizeof(struct arguments));
-                args->array = array;
-                args->number_of_elements = number_of_elements;
-                args->number_of_threads = number_of_threads;
-                args->thread_id = i;
-                args->seed = random();
+                args[i].array = array;
+                args[i].number_of_elements = number_of_elements;
+                args[i].number_of_threads = number_of_threads;
+                args[i].thread_id = i;
+                args[i].seed = random();
 
                 // create the threads
-                if(pthread_create(&threads[i], NULL, initialize_array, (void *) args) == -1) {
+                if(pthread_create(&threads[i], NULL, initialize_array, (void *) &args[i]) == -1) {
                         fprintf(stderr, "%s %d\n", "Can't create thread number", i);
                 }
 	}
@@ -128,6 +124,7 @@ int main (int argc, char* argv[])
         // free memory
         free(array);
         free(threads);
+	free(args);
         
         return 0;
 }
