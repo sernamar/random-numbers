@@ -12,60 +12,39 @@
 
 struct arguments {
         double *array;
-        int number_of_elements;
-        int number_of_threads;
-        int thread_id;
+        int start;
+        int end;
         unsigned long seed;
 };
 
 void * initialize_array (void *arguments) {
 
-        /** Get arguments **/
-        
+        /* Get arguments */
         struct arguments *args = (struct arguments *) arguments;
         double *array = args->array;
-        int number_of_elements = args->number_of_elements;
-        int number_of_threads = args->number_of_threads;
-        int elements_per_thread = number_of_elements / number_of_threads;
-        int thread_id = args->thread_id;
+        int start = args->start;
+        int end = args->end;
         unsigned long seed = args->seed;
 
-        /** Create a new random number generator **/
-        
-        // declare the necessary random number generator variables
+        /* Create a new random number generator */
         const gsl_rng_type *T;
         gsl_rng *r;
 
-        // set the default values for the random number generator variables
-        gsl_rng_env_setup();
+        gsl_rng_env_setup(); // set the default values for the random number generator variables
 
-        // setup the generator using the seed we got from the main function
         T = gsl_rng_default;
         r = gsl_rng_alloc (T);
-        gsl_rng_set(r, seed);
+        gsl_rng_set(r, seed); // setup the generator using the seed we got from the main function
 
-        /** Using the GSL library, initialize the array with normal random values **/
-
-	int start = thread_id * elements_per_thread;
-        int end = start + elements_per_thread;
-
+        /* Using the GSL library, initialize the array with normal random values */
         for (int i = start; i < end; i++) {
                 array[i] = MEAN + gsl_ran_gaussian (r, STANDARD_DEVIATION);;
         }
 
-        // initialize remaining elements if number_of_elements is not divisible by number_of_threads
-        if ((thread_id == number_of_threads - 1) && (end < number_of_elements)) {
-                start = end;
-                end = number_of_elements;
-                for (int i = start;  i < end; i++) {
-                        array[i] = MEAN + gsl_ran_gaussian (r, STANDARD_DEVIATION);;
-                }
-        }
-
-        /** Free memory **/
+        /* Free memory */
         gsl_rng_free (r);
 
-        /** Exit thread when finished **/
+        /* Exit thread when finished */
         pthread_exit(NULL);
 }
 
@@ -82,6 +61,8 @@ int main (int argc, char* argv[])
                 fprintf(stderr, "%s:\n", "Use: ./avoid_race_condition number_of_elements number_of_threads");
                 exit(EXIT_FAILURE);
         }
+
+        int elements_per_thread = number_of_elements / number_of_threads;
         
         double *array = (double *) malloc(number_of_elements * sizeof(double));
         pthread_t *threads = (pthread_t *) malloc(number_of_threads * sizeof(pthread_t));
@@ -92,9 +73,13 @@ int main (int argc, char* argv[])
         // create threads
 	for (i = 0; i < number_of_threads; i++) {
                 args[i].array = array;
-                args[i].number_of_elements = number_of_elements;
-                args[i].number_of_threads = number_of_threads;
-                args[i].thread_id = i;
+                args[i].start = i * elements_per_thread;
+                if (i == number_of_threads - 1) { // in the last thread, process the remaining elements in case
+                                                  // that NUMBER_OF_ELEMENTS is not divisible by NUMBER_OF_THREADS
+                        args[i].end = number_of_elements;
+                } else {
+                        args[i].end = args[i]. start + elements_per_thread;
+                }
                 args[i].seed = random();
 
                 // create the threads
