@@ -17,7 +17,7 @@ Python version: 3.7.3
 
 ### Simulations
 
-#### 1 billion samples, sequentially
+#### 1 billion numbers, sequentially
 
 ##### C (gcc, default optimization level)
 
@@ -63,7 +63,7 @@ Heap exhausted, game over.
 Welcome to LDB, a low-level debugger for the Lisp runtime environment.
 ldb> 
 ```
-#### 1 billion samples, in parallel
+#### 1 billion numbers, in parallel
 
 ##### C (gcc, default optimization level)
 
@@ -94,6 +94,52 @@ real    0m32,165s
 user    0m13,329s
 sys     0m5,896s
 
+```
+
+##### Common Lisp (1 billion numbers, not randomly generated)
+
+```shell
+time ./p-normal-numbers 1000000000 4
+Heap exhausted during allocation: 1046183936 bytes available, 8000000016 requested.
+Gen  Boxed   Code    Raw  LgBox LgCode  LgRaw  Pin       Alloc     Waste        Trig      WP GCs Mem-age
+ 0       2      0      1      0      0      0    0       24128     74176    10761546       3   1  0.0000
+ 1       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 2       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 3       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 4       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 5       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 6     553      2    217     55      0     10    0    26757376    669440     2000000     837   0  0.0000
+           Total bytes allocated    =      26781504
+           Dynamic-space-size bytes =    1073741824
+GC control variables:
+   *GC-INHIBIT* = false
+   *GC-PENDING* = true
+   *STOP-FOR-GC-PENDING* = false
+
+debugger invoked on a SB-KERNEL::HEAP-EXHAUSTED-ERROR in thread
+#<THREAD "main thread" RUNNING {1001A30173}>:
+  Heap exhausted (no more space for allocation).
+1046183936 bytes available, 8000000016 requested.
+
+PROCEED WITH CAUTION.
+
+Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
+
+restarts (invokable by number or by possibly-abbreviated name):
+  0: [ABORT] Exit from the current thread.
+
+(SB-KERNEL::HEAP-EXHAUSTED-ERROR 523091968 4000000008)
+0]
+```
+
+Unfortunatelly, it seems that my Common Lisp program can not deal with 1 billion numbers... Just as reference, it works fine for 10 million numbers (note that they are not randomly generated, but just initialized using the index of their elements):
+
+```shell
+time ./p-normal-numbers 100000000 4
+
+real    0m1,034s
+user    0m0,932s
+sys     0m0,100s
 ```
 
 ## How to run the programs
