@@ -156,5 +156,6 @@ For example, to generate 100 random numbers from the standard normal distributio
 
 - C (not optimized): `./p_normal_numbers 100 4`
 - C (optimized): `./p_normal_numbers_O3 100 4`
+- Common Lisp: `./p-normal-numbers 100 4`
 - Python: `python3 normal_numbers.py 100`
 
