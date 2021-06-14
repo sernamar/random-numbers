@@ -84,7 +84,7 @@ int main (int argc, char* argv[])
         }
         
         double *array = (double *) malloc(number_of_elements * sizeof(double));
-        pthread_t *threads = (pthread_t *) malloc(number_of_elements * sizeof(pthread_t));
+        pthread_t *threads = (pthread_t *) malloc(number_of_threads * sizeof(pthread_t));
         struct arguments *args;
 
         srand(time(NULL)); // need to to use a new seed each time we run the program
