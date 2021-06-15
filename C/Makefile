@@ -18,5 +18,8 @@ p_normal_numbers: p_normal_numbers.c
 p_normal_numbers_O3: p_normal_numbers.c
 	gcc -O3 -lpthread $^ -o $@ -lgsl -lgslcblas
 
+openmp_normal_numbers: openmp_normal_numbers.c
+	gcc -fopenmp $^ -o $@ -lgsl -lgslcblas
+
 clean:
-	rm normal_numbers_dev normal_numbers normal_numbers_O3 p_normal_numbers_dev p_normal_numbers p_normal_numbers_O3
+	rm normal_numbers_dev normal_numbers normal_numbers_O3 p_normal_numbers_dev p_normal_numbers p_normal_numbers_O3 openmp_normal_numbers
