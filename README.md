@@ -70,7 +70,7 @@ Unfortunately, it seems that the Common Lisp program cannot deal with 1 billion 
 
 ```shell
 (defparameter *a* (make-array 100000000))
-*A
+*A*
 ```
 
 But with 100 million + 1 element, it doesn't:
@@ -132,7 +132,7 @@ user    1m44,276s
 sys     0m2,962s
 ```
 
-##### C, OpenMP
+##### C (OpenMP)
 
 ```shell
 time ./openmp_normal_numbers 1000000000
