@@ -23,20 +23,22 @@ Python version: 3.7.3
 
 ```shell
 time ./normal_numbers 1000000000
+Done.
 
-real    8m46,879s
-user    4m0,642s
-sys     0m35,221s
+real    1m19,716s
+user    1m17,244s
+sys     0m2,053s
 ```
 
 ##### C (gcc, O3 optimization level)
 
 ```shell
 time ./normal_numbers_O3 1000000000
+Done.
 
-real    9m14,306s
-user    4m4,119s
-sys     0m37,306s
+real    1m22,199s
+user    1m17,696s
+sys     0m1,920s
 ```
 
 ##### Common Lisp (SBCL)
@@ -114,9 +116,10 @@ restarts (invokable by number or by possibly-abbreviated name):
 ```shell
 time ./p_normal_numbers 1000000000 4
 
-real    0m29,527s
-user    1m48,240s
-sys     0m3,309s
+
+real    0m29,002s
+user    1m47,867s
+sys     0m2,259s
 ```
 
 ##### C (gcc, O3 optimization level)
@@ -124,9 +127,19 @@ sys     0m3,309s
 ```shell
 time ./p_normal_numbers_O3 1000000000 4
 
-real    0m28,776s
-user    1m43,710s
-sys     0m3,392s
+real    0m28,418s
+user    1m44,276s
+sys     0m2,962s
+```
+
+##### C, OpenMP
+
+```shell
+time ./openmp_normal_numbers 1000000000
+
+real    0m53,234s
+user    3m22,833s
+sys     0m2,309s
 ```
 
 ##### Python (numpy runs the `standard_normal` function in parallel)
@@ -134,10 +147,9 @@ sys     0m3,392s
 ```shell
 time python3 normal_numbers.py 1000000000
 
-real    0m32,165s
-user    0m13,329s
-sys     0m5,896s
-
+real    0m19,954s
+user    0m13,570s
+sys     0m4,412s
 ```
 
 ##### Common Lisp (1 billion numbers, not randomly generated)
@@ -200,6 +212,7 @@ For example, to generate 100 random numbers from the standard normal distributio
 
 - C (not optimized): `./p_normal_numbers 100 4`
 - C (optimized): `./p_normal_numbers_O3 100 4`
+- C (OpenMP): `./openmp_normal_numbers 100 4`
 - Common Lisp: `./p-index-numbers 100 4`
 - Python: `python3 normal_numbers.py 100`
 
