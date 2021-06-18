@@ -67,7 +67,6 @@
           :do (progn
                 (when (= i (- number-of-threads 1))
                   (setf end length))
-                ;(format t "start: ~a, end: ~a~%" start end)
                 (bt:join-thread (bt:make-thread (lambda () (initialize-array array start end)))))))
   array)
 
