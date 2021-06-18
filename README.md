@@ -198,6 +198,8 @@ user    0m0,932s
 sys     0m0,100s
 ```
 
+##### Common Lisp (10 million numbers, randomly generated)
+
 After implementing a parallel version that generates random numbers using the GSL library (not using GSLL but just my own biddings through CFFI), it fails when allocating 100 million numbers:
 
 ```shell
@@ -270,6 +272,6 @@ For example, to generate 100 random numbers from the standard normal distributio
 - C (not optimized): `./p_normal_numbers 100 4`
 - C (optimized): `./p_normal_numbers_O3 100 4`
 - C (OpenMP): `./openmp_normal_numbers 100`
-- Common Lisp: `./p-index-numbers 100 4`
+- Common Lisp: `./p-random-numbers 100 4`
 - Python: `python3 normal_numbers.py 100`
 
