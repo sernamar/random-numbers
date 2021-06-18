@@ -66,7 +66,7 @@ Welcome to LDB, a low-level debugger for the Lisp runtime environment.
 ldb> 
 ```
 
-Unfortunately, it seems that the Common Lisp program cannot deal with 1 billion numbers... Apparently, the problem is that we cannot make an array with so many elements. Just playing a bit, it seems that in my system, the limit is 100 million elements. With 100 million elements, it works:
+Unfortunately, it seems that the Common Lisp program cannot deal with 1 billion numbers... Apparently, the problem is that we cannot make an array with so many elements. Just playing a bit, it seems that in my system cannot cope with 100 million elements. But with 100 million elements, it works:
 
 ```shell
 (defparameter *a* (make-array 100000000))
@@ -196,6 +196,63 @@ time ./p-index-numbers 100000000 4
 real    0m1,034s
 user    0m0,932s
 sys     0m0,100s
+```
+
+After implementing a parallel version that generates random numbers using the GSL library (not using GSLL but just my own biddings through CFFI), it fails when allocating 100 million numbers:
+
+```shell
+$ time ./p-random-numbers 100000000 4
+Heap exhausted during garbage collection: 0 bytes available, 16 requested.
+Gen  Boxed   Code    Raw  LgBox LgCode  LgRaw  Pin       Alloc     Waste        Trig      WP GCs Mem-age
+ 0    1644      0    820      0      0      0    3    80674832     65520    37672714    2464   1  0.0000
+ 1       0      0   1636      0      0      0    0    53608448         0    10737418    1636   0  0.0000
+ 2       8      0   3281  24415      0      0 24422   907650096    154576     2000000   27704   0  0.0000
+ 3       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 4       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 5       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
+ 6     610      2    243     89      0     20    0    30615248    973104     2000000     964   0  0.0000
+           Total bytes allocated    =    1072548624
+           Dynamic-space-size bytes =    1073741824
+GC control variables:
+   *GC-INHIBIT* = true
+   *GC-PENDING* = true
+   *STOP-FOR-GC-PENDING* = false
+fatal error encountered in SBCL pid 3068 tid 3070:
+Heap exhausted, game over.
+
+Welcome to LDB, a low-level debugger for the Lisp runtime environment.
+ldb>
+```
+
+But for 10 million numbers we get:
+
+```shell
+$ time ./p-random-numbers 10000000 4
+
+real    0m0,975s
+user    0m0,933s
+sys     0m0,037s
+
+```
+
+Not bad when compared with the NumPy program:
+
+```shell
+time python3 normal_numbers.py 10000000
+
+real    0m0,657s
+user    0m0,407s
+sys     0m0,167s
+```
+
+And an order of magnitude slower that the C program:
+
+```shell
+$ time ./p_normal_numbers 10000000 4
+
+real    0m0,152s
+user    0m0,526s
+sys     0m0,009s
 ```
 
 ## How to run the programs
