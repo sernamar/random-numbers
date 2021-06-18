@@ -1,4 +1,5 @@
 (ql:quickload :bordeaux-threads)
+(ql:quickload :cffi)
 
 (defpackage #:random-numbers
   (:use #:cl)
@@ -8,10 +9,54 @@
 
 (in-package #:random-numbers)
 
+;;; ----------------------- ;;;
+;;; CFFI to the GSL library ;;;
+;;; ----------------------- ;;;
+
+(cffi:define-foreign-library libgsl
+  (:unix "libgsl.so")
+  (t (:default "libgsl")))
+
+(cffi:use-foreign-library libgsl)
+
+(cffi:defcvar ("gsl_rng_default" *gsl-rng-default*) :pointer)
+
+(cffi:defcfun "gsl_rng_alloc" :pointer
+  (gsl-rng-type :pointer))
+
+(cffi:defcfun "gsl_rng_free" :void
+  (gsl-rng :pointer))
+
+(cffi:defcfun "gsl_rng_set" :void
+  (gsl-rng :pointer)
+  (seed :unsigned-long))
+
+(cffi:defcfun "gsl_ran_gaussian" :double
+  (gsl-rng :pointer)
+  (standard-deviation :double))
+
+;;; ----------------------- ;;;
+;;; Generate random numbers ;;;
+;;; ----------------------- ;;;
+
+(defun make-gsl-rng ()
+  (let ((r (gsl-rng-alloc *gsl-rng-default*))
+        (seed (random (expt 2 32))))
+    (gsl-rng-set r seed)
+    r))
+
+(defun free-gsl-rng (gsl-rng)
+  (gsl-rng-free gsl-rng))
+
+(defun generate-normal-random-number (gsl-rng &optional (mean 0) (standard-deviation 1.0d0))
+  (+ mean (gsl-ran-gaussian gsl-rng standard-deviation)))
+
 (defun initialize-array (array start end)
-  (loop :for i :from start :below end
-        :do (setf (aref array i) i))
-  array)
+  (let ((gsl-rng (make-gsl-rng)))
+    (loop :for i :from start :below end
+          :do (setf (aref array i) (generate-normal-random-number gsl-rng)))
+    (free-gsl-rng gsl-rng)
+    array))
 
 (defun p-initialize-array (array &optional (number-of-threads 4))
   (let* ((length (length array))
@@ -38,4 +83,4 @@
     array))
 
 ;;; To create an executable program using SBCL, use:
-;; (sb-ext:save-lisp-and-die "p-index-numbers" :toplevel #'main :executable t)
+;; (sb-ext:save-lisp-and-die "p-random-numbers" :toplevel #'main :executable t)
