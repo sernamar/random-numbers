@@ -79,7 +79,8 @@
   ;; initialize-array
   (let ((array (make-array number-of-elements)))
     (p-initialize-array array number-of-threads)
-    array))
+    ;array
+    'done))
 
 ;;; To create an executable program using SBCL, use:
 ;; (sb-ext:save-lisp-and-die "p-random-numbers" :toplevel #'main :executable t)
