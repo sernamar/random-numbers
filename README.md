@@ -11,7 +11,7 @@ RAM memory: 8103MB
 OS: Debian GNU/Linux 10 (buster)
 Kernel: Linux 4.19.0-16-amd64 (x86_64)
 gcc version: 8.3.0
-sbcl version: 2.1.3
+sbcl version: 2.1.5
 Python version: 3.7.3
 ```
 
