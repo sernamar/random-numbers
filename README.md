@@ -203,7 +203,7 @@ sys     0m0,100s
 After implementing a parallel version that generates random numbers using the GSL library (not using GSLL but just my own biddings through CFFI), it fails when allocating 100 million numbers:
 
 ```shell
-$ time ./p-random-numbers 100000000 4
+$ time ./p-normal-numbers 100000000 4
 Heap exhausted during garbage collection: 0 bytes available, 16 requested.
 Gen  Boxed   Code    Raw  LgBox LgCode  LgRaw  Pin       Alloc     Waste        Trig      WP GCs Mem-age
  0    1644      0    820      0      0      0    3    80674832     65520    37672714    2464   1  0.0000
@@ -229,7 +229,7 @@ ldb>
 But for 10 million numbers we get:
 
 ```shell
-$ time ./p-random-numbers 10000000 4
+$ time ./p-normal-numbers 10000000 4
 
 real    0m0,975s
 user    0m0,933s
@@ -272,6 +272,6 @@ For example, to generate 100 random numbers from the standard normal distributio
 - C (not optimized): `./p_normal_numbers 100 4`
 - C (optimized): `./p_normal_numbers_O3 100 4`
 - C (OpenMP): `./openmp_normal_numbers 100`
-- Common Lisp: `./p-random-numbers 100 4`
+- Common Lisp: `./p-normal-numbers 100 4`
 - Python: `python3 normal_numbers.py 100`
 
