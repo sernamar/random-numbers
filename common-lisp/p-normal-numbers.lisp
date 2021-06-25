@@ -80,7 +80,7 @@
   ;; initialize-array
   (let ((array (static-vectors:make-static-vector number-of-elements :element-type '(double-float))))
     (p-initialize-array array number-of-threads)
-    ;array
+    (static-vectors:free-static-vector array) ; free the static vector to avoid memory leaks
     'done))
 
 ;;; To create an executable program using SBCL, use:
