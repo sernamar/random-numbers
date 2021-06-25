@@ -59,7 +59,7 @@
     (free-gsl-rng gsl-rng)
     array))
 
-(defun p-initialize-array (array &optional (number-of-threads 4))
+(defun initialize-array-in-parallel (array &optional (number-of-threads 4))
   (let* ((length (length array))
          (elements-per-thread (floor (/ length number-of-threads))))
     (loop :for i :from 0 :below number-of-threads
@@ -79,7 +79,7 @@
       (setf number-of-threads (parse-integer (second args)))))  
   ;; initialize-array
   (let ((array (static-vectors:make-static-vector number-of-elements :element-type '(double-float))))
-    (p-initialize-array array number-of-threads)
+    (initialize-array-in-parallel array number-of-threads)
     (static-vectors:free-static-vector array) ; free the static vector to avoid memory leaks
     'done))
 
