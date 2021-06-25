@@ -66,48 +66,7 @@ Welcome to LDB, a low-level debugger for the Lisp runtime environment.
 ldb> 
 ```
 
-Unfortunately, it seems that the Common Lisp program cannot deal with 1 billion numbers... Apparently, the problem is that we cannot make an array with so many elements. Just playing a bit, it seems that in my system cannot cope with 100 million elements. But with 100 million elements, it works:
-
-```shell
-(defparameter *a* (make-array 100000000))
-*A*
-```
-
-But with 100 million + 1 element, it doesn't:
-
-```shell
-(defparameter *a* (make-array 100000001))       
-Heap exhausted during allocation: 112525312 bytes available, 800000032 requested.
-Gen  Boxed   Code    Raw  LgBox LgCode  LgRaw  Pin       Alloc     Waste        Trig      WP GCs Mem-age
- 0       3      0      0   2442      0      0 2443    80002240    115520    90739658    2445   1  0.0000
- 1     120      1     37  24415      0      0 24424   805111216     96848   815848634   24573   1  0.0000
- 2       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 3       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 4       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 5       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 6     430      2    182     55      0     10    0    21573072    676400     2000000     679   0  0.0000
-           Total bytes allocated    =     906686528
-           Dynamic-space-size bytes =    1073741824
-GC control variables:
-   *GC-INHIBIT* = false
-   *GC-PENDING* = true
-   *STOP-FOR-GC-PENDING* = false
-
-debugger invoked on a SB-KERNEL::HEAP-EXHAUSTED-ERROR in thread
-#<THREAD "main thread" RUNNING {1001A08173}>:
-  Heap exhausted (no more space for allocation).
-112525312 bytes available, 800000032 requested.
-
-PROCEED WITH CAUTION.
-
-Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
-
-restarts (invokable by number or by possibly-abbreviated name):
-  0: [ABORT] Exit debugger, returning to top level.
-
-(SB-KERNEL::HEAP-EXHAUSTED-ERROR 56262656 400000016)
-0] 
-```
+Unfortunately, it seems that the Common Lisp program cannot deal with a list of 1 billion numbers... An option would be to use an array created with the `static-arrays` library (using the native `make-array` function doesn't work either for so many elements). We'll see that aproach in the parallel version of this program.
 
 #### 1 billion numbers, in parallel
 
@@ -142,6 +101,16 @@ user    3m22,833s
 sys     0m2,309s
 ```
 
+##### Common Lisp
+
+```shell
+time ./p-normal-numbers 1000000000 4
+
+real    1m17,709s
+user    1m15,465s
+sys     0m1,278s
+```
+
 ##### Python (numpy runs the `standard_normal` function in parallel)
 
 ```shell
@@ -150,111 +119,6 @@ time python3 normal_numbers.py 1000000000
 real    0m19,954s
 user    0m13,570s
 sys     0m4,412s
-```
-
-##### Common Lisp (1 billion numbers, not randomly generated)
-
-```shell
-time ./p-index-numbers 1000000000 4
-Heap exhausted during allocation: 1046183936 bytes available, 8000000016 requested.
-Gen  Boxed   Code    Raw  LgBox LgCode  LgRaw  Pin       Alloc     Waste        Trig      WP GCs Mem-age
- 0       2      0      1      0      0      0    0       24128     74176    10761546       3   1  0.0000
- 1       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 2       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 3       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 4       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 5       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 6     553      2    217     55      0     10    0    26757376    669440     2000000     837   0  0.0000
-           Total bytes allocated    =      26781504
-           Dynamic-space-size bytes =    1073741824
-GC control variables:
-   *GC-INHIBIT* = false
-   *GC-PENDING* = true
-   *STOP-FOR-GC-PENDING* = false
-
-debugger invoked on a SB-KERNEL::HEAP-EXHAUSTED-ERROR in thread
-#<THREAD "main thread" RUNNING {1001A30173}>:
-  Heap exhausted (no more space for allocation).
-1046183936 bytes available, 8000000016 requested.
-
-PROCEED WITH CAUTION.
-
-Type HELP for debugger help, or (SB-EXT:EXIT) to exit from SBCL.
-
-restarts (invokable by number or by possibly-abbreviated name):
-  0: [ABORT] Exit from the current thread.
-
-(SB-KERNEL::HEAP-EXHAUSTED-ERROR 523091968 4000000008)
-0]
-```
-
-As mentioned earlier, we cannot make an array with so many elements... Just as reference, these are the time benchmarks we get with 100 million numbers (also note that these are not randomly generated, but just initialized using the index of the array's elements):
-
-```shell
-time ./p-index-numbers 100000000 4
-
-real    0m1,034s
-user    0m0,932s
-sys     0m0,100s
-```
-
-##### Common Lisp (10 million numbers, randomly generated)
-
-After implementing a parallel version that generates random numbers using the GSL library (not using GSLL but just my own biddings through CFFI), it fails when allocating 100 million numbers:
-
-```shell
-$ time ./p-normal-numbers 100000000 4
-Heap exhausted during garbage collection: 0 bytes available, 16 requested.
-Gen  Boxed   Code    Raw  LgBox LgCode  LgRaw  Pin       Alloc     Waste        Trig      WP GCs Mem-age
- 0    1644      0    820      0      0      0    3    80674832     65520    37672714    2464   1  0.0000
- 1       0      0   1636      0      0      0    0    53608448         0    10737418    1636   0  0.0000
- 2       8      0   3281  24415      0      0 24422   907650096    154576     2000000   27704   0  0.0000
- 3       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 4       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 5       0      0      0      0      0      0    0           0         0     2000000       0   0  0.0000
- 6     610      2    243     89      0     20    0    30615248    973104     2000000     964   0  0.0000
-           Total bytes allocated    =    1072548624
-           Dynamic-space-size bytes =    1073741824
-GC control variables:
-   *GC-INHIBIT* = true
-   *GC-PENDING* = true
-   *STOP-FOR-GC-PENDING* = false
-fatal error encountered in SBCL pid 3068 tid 3070:
-Heap exhausted, game over.
-
-Welcome to LDB, a low-level debugger for the Lisp runtime environment.
-ldb>
-```
-
-But for 10 million numbers we get:
-
-```shell
-$ time ./p-normal-numbers 10000000 4
-
-real    0m0,975s
-user    0m0,933s
-sys     0m0,037s
-
-```
-
-Not bad when compared with the NumPy program:
-
-```shell
-time python3 normal_numbers.py 10000000
-
-real    0m0,657s
-user    0m0,407s
-sys     0m0,167s
-```
-
-And an order of magnitude slower that the C program:
-
-```shell
-$ time ./p_normal_numbers 10000000 4
-
-real    0m0,152s
-user    0m0,526s
-sys     0m0,009s
 ```
 
 ## How to run the programs

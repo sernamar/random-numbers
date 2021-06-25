@@ -1,5 +1,6 @@
 (ql:quickload :bordeaux-threads)
 (ql:quickload :cffi)
+(ql:quickload :static-vectors)
 
 (defpackage #:random-numbers
   (:use #:cl)
@@ -77,7 +78,7 @@
       (setf number-of-elements (parse-integer (first args)))
       (setf number-of-threads (parse-integer (second args)))))  
   ;; initialize-array
-  (let ((array (make-array number-of-elements)))
+  (let ((array (static-vectors:make-static-vector number-of-elements :element-type '(double-float))))
     (p-initialize-array array number-of-threads)
     ;array
     'done))
